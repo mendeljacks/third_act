@@ -45,30 +45,30 @@ app.post('/token', async (req, res) => {
 
 
     ///---------------Temporary make a test account on testnet--------------------------
-    const temp_customer_private_key = await PrivateKey.generate()
-    const client = Client['forTestnet']();
-    client.setOperator(operator_account_id, operator_private_key);
-    // Create a new account with 1,000 tinybar starting balance
-    const newAccountTransactionResponse = await new AccountCreateTransaction()
-        .setKey(temp_customer_private_key.publicKey)
-        .setInitialBalance(Hbar.fromTinybars(30*1000000000))
-        .execute(client);
+    // const temp_customer_private_key = await PrivateKey.generate()
+    // const client = Client['forTestnet']();
+    // client.setOperator(operator_account_id, operator_private_key);
+    // // Create a new account with 1,000 tinybar starting balance
+    // const newAccountTransactionResponse = await new AccountCreateTransaction()
+    //     .setKey(temp_customer_private_key.publicKey)
+    //     .setInitialBalance(Hbar.fromTinybars(30*1000000000))
+    //     .execute(client);
 
-    // Get the new account ID
-    const getReceipt = await newAccountTransactionResponse.getReceipt(client);
-    const temp_customer_account_id = getReceipt.accountId;
+    // // Get the new account ID
+    // const getReceipt = await newAccountTransactionResponse.getReceipt(client);
+    // const temp_customer_account_id = getReceipt.accountId;
 
-    console.log("The new account ID is: " + temp_customer_account_id);
+    // console.log("The new account ID is: " + temp_customer_account_id);
 
-    // Verify the account balance
-    const accountBalance = await new AccountBalanceQuery()
-        .setAccountId(temp_customer_account_id)
-        .execute(client);
+    // // Verify the account balance
+    // const accountBalance = await new AccountBalanceQuery()
+    //     .setAccountId(temp_customer_account_id)
+    //     .execute(client);
 
-    console.log("The new account balance is: " + accountBalance.hbars.toTinybars() + " tinybar.");
+    // console.log("The new account balance is: " + accountBalance.hbars.toTinybars() + " tinybar.");
 
-    req.body.customer_private_key = temp_customer_private_key
-    req.body.customer_account_id = temp_customer_account_id
+    // req.body.customer_private_key = temp_customer_private_key
+    // req.body.customer_account_id = temp_customer_account_id
     ///---------------Temporary--------------------------
 
     await mint_token(req.body, operator_account_id, operator_private_key)
