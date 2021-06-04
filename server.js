@@ -6,7 +6,9 @@ const cors = require('cors')
 const {serializeError} = require('serialize-error')
 const joi = require('joi');
 const {PrivateKey, Client, AccountCreateTransaction, AccountBalanceQuery, Hbar} = require("@hashgraph/sdk");
-const port = process.env.PORT || 3000
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_KEY)
+const port = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json({limit: '50mb'}))
@@ -29,6 +31,30 @@ const token_schema = joi.object({
         symbol: joi.string().required(),
         initial_supply: joi.number().positive().integer().required()
     }).required()
+})
+
+app.post('/checkout', async (req, res) => {
+    console.log('New Checkout', req.body)
+    const msg = {
+        to: ['mendeljacks@gmail.com', 'hello@thirdact.digital'],
+        from: {
+            "email": "hello@thirdact.digital",
+            "name": "Third Act"
+        },
+        replyTo: 'hello@thirdact.digital',
+        subject: 'New customer inquiry',
+        html: `<pre>${JSON.stringify(req.body, null, 4)}</pre>`,
+        // attachments
+    }
+    sgMail.send(msg)
+        .then(result => {
+            res.status(200).json('Done')
+        })
+        .catch(err => {
+            console.error(err?.response?.body)
+            res.status(400).json(serializeError(err))
+            return Promise.reject('email failed to send')
+        })
 })
 
 app.post('/token', async (req, res) => {
